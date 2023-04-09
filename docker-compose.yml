@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  mysqldb: 
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: SAProyecto1
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./Database:/entrada
+    networks:
+      - SAProyecto1
+  jupyter_container:
+    image: jupyter/scipy-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./Jupyter:/home/jovyan/work
+    depends_on:
+      - mysqldb
+  grafana_container:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - mysqldb
+volumes:
+  db_data:
+  grafana_data:
+networks:
+  SAProyecto1:
